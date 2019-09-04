@@ -21,6 +21,6 @@ const server = net.createServer((socket) => {
     console.log(err);
 });
 
-server.listen(SMTPport ,() => {
-    console.log('SMTP server runing on port: ' + SMTPport);
-});
+//server.listen(SMTPport ,() => {
+//    console.log('SMTP server runing on port: ' + SMTPport);
+//});
