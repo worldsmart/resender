@@ -1,14 +1,15 @@
 const express = require('express');
 const app = express();
 
-const port = 8080;
+const HTTPport = 8080;
+const SMTPport = 25;
 
 app.get('*', (req,res)=>{
     res.send('Hello world!')
 });
 
-app.listen(port,()=>{
-    console.log("HTTP server runing on port: " + port);
+app.listen(HTTPport,()=>{
+    console.log("HTTP server runing on port: " + HTTPport);
 });
 
 
@@ -20,6 +21,6 @@ const server = net.createServer((socket) => {
     console.log(err);
 });
 
-server.listen(25 ,() => {
-    console.log('SMTP server runing on port: 25');
+server.listen(SMTPport ,() => {
+    console.log('SMTP server runing on port: ' + SMTPport);
 });
