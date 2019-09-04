@@ -1,12 +1,14 @@
 const express = require('express');
 const app = express();
 
+const port = 8080;
+
 app.get('*', (req,res)=>{
     res.send('Hello world!')
 });
 
-app.listen(80,()=>{
-    console.log('HTTP app is runing on port: 80');
+app.listen(port,()=>{
+    console.log("HTTP server runing on port: " + port);
 });
 
 
