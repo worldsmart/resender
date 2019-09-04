@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 const HTTPport = 8080;
-const SMTPport = 465;
+const SMTPport = 587;
 
 app.get('*', (req,res)=>{
     res.send('Hello world!')
