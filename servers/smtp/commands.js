@@ -1,4 +1,6 @@
 module.exports = (data)=>{
+    console.log('helo');
+    console.log(data);
     let res = '250 | onyame.ml | hello ';
     let status = true;
     let d = {};
@@ -31,6 +33,8 @@ module.exports = (data)=>{
 };
 
 function from(data) {
+    console.log('from');
+    console.log(data);
     let res = '250 | OK ';
     let status = true;
     let d = {};
@@ -64,6 +68,8 @@ function from(data) {
 }
 
 function to(data) {
+    console.log('to');
+    console.log(data);
     let res = '250 | OK';
     let status = true;
     let d = {};
@@ -101,6 +107,8 @@ function to(data) {
 }
 
 function msg(data) {
+    console.log('msg');
+    console.log(data);
     let res = '250 | Msg body : | use line with "." to end entering';
     let status = true;
     let d = {};
@@ -119,6 +127,8 @@ function msg(data) {
 }
 
 function bodyHendler(data){
+    console.log('data');
+    console.log(data);
     let ended = false;
     let returneble = data + '\u000D\u000A';
     if(data == '.'){

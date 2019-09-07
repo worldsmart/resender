@@ -48,7 +48,8 @@ const server = net.createServer((socket) => {
 });
 
 server.on('connection', (socket)=>{
-    socket.write('230 | onyame.ml | ESMTP\u000D\u000A');
+    console.log('conected');
+    socket.write('220 | onyame.ml | ESMTP\u000D\u000A');
 });
 
 server.on('error', (err) => {
