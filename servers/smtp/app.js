@@ -6,34 +6,35 @@ const server = net.createServer((socket) => {
     socket.setTimeout(15000);
     let dataString = '';
     let msg = {};
-    console.log(socket.remoteAddress);
-    socket.on('data', (data)=>{
-        if(data.charCodeAt(0) == 13){
-            if(dataString.toUpperCase().split(' ')[0] == 'RSET'){
-                reset(socket);
-            }else if (dataString.toUpperCase().split(' ')[0] == 'QUIT'){
-                socket.end('221 | closing connection | bb =B\u000D\u000A');
-            }else {
-                let executed = expectedCommand(dataString);
-                if(executed.status == 'close'){
-                    socket.end(executed.response);
-                }else if(!executed.status){
-                    socket.write(executed.response);
+    socket.on('data', (str)=>{
+        for(let data in str){
+            if(data.charCodeAt(0) == 13){
+                if(dataString.toUpperCase().split(' ')[0] == 'RSET'){
+                    reset(socket);
+                }else if (dataString.toUpperCase().split(' ')[0] == 'QUIT'){
+                    socket.end('221 | closing connection | bb =B\u000D\u000A');
                 }else {
-                    if(executed['ended']){
-                        console.log('ended');
-                    }else {
-                        for(let a in executed.data){
-                            if(msg[a]) msg[a] += executed.data[a];
-                            else msg[a] = executed.data[a];
-                        }
-                        expectedCommand = executed.next;
+                    let executed = expectedCommand(dataString);
+                    if(executed.status == 'close'){
+                        socket.end(executed.response);
+                    }else if(!executed.status){
                         socket.write(executed.response);
+                    }else {
+                        if(executed['ended']){
+                            console.log('ended');
+                        }else {
+                            for(let a in executed.data){
+                                if(msg[a]) msg[a] += executed.data[a];
+                                else msg[a] = executed.data[a];
+                            }
+                            expectedCommand = executed.next;
+                            socket.write(executed.response);
+                        }
                     }
                 }
-            }
-            dataString = '';
-        }else dataString += data;
+                dataString = '';
+            }else dataString += data;
+        }
     });
 
     function reset(socket) {
