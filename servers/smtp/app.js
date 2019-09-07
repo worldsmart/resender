@@ -8,7 +8,7 @@ const server = net.createServer((socket) => {
     let msg = {};
     socket.on('data', (str)=>{
         for(let data in str){
-            if(data.charCodeAt(0) == 13){
+            if(str[data].charCodeAt(0) == 13){
                 if(dataString.toUpperCase().split(' ')[0] == 'RSET'){
                     reset(socket);
                 }else if (dataString.toUpperCase().split(' ')[0] == 'QUIT'){
@@ -33,7 +33,9 @@ const server = net.createServer((socket) => {
                     }
                 }
                 dataString = '';
-            }else dataString += data;
+            }else if(str[data].charCodeAt(0) != 10){
+                dataString += str[data];
+            }
         }
     });
 
