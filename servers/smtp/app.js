@@ -1,4 +1,6 @@
 const net = require('net');
+const fs = require('fs');
+const path = require('path');
 let expectedCommand = require('./commands.js');
 
 const server = net.createServer((socket) => {
@@ -21,7 +23,25 @@ const server = net.createServer((socket) => {
                         socket.write(executed.response);
                     }else {
                         if(executed['ended']){
-                            console.log('ended');
+                            fs.readFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), 'utf8', (err, data)=>{
+                                if(err){
+                                    fs.writeFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), '['+JSON.stringify(msg)+']', (err)=>{
+                                        if(err) socket.write('500 | Fs system error\u000D\u000A');
+                                        msg = {};
+                                        socket.write('250 | Done\u000D\u000A');
+                                    });
+                                }else {
+                                    let tmp = JSON.parse(data);
+                                    tmp.push(msg);
+                                    tmp = JSON.stringify(tmp);
+                                    fs.writeFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), tmp, (err)=>{
+                                        if(err) socket.write('500 | Fs system error\u000D\u000A');
+                                        msg = {};
+                                        socket.write('250 | Done\u000D\u000A');
+                                    });
+                                }
+                            });
+
                         }else {
                             for(let a in executed.data){
                                 if(msg[a]) msg[a] += executed.data[a];
@@ -48,7 +68,6 @@ const server = net.createServer((socket) => {
 });
 
 server.on('connection', (socket)=>{
-    console.log('conected');
     socket.write('220 | onyame.ml | ESMTP\u000D\u000A');
 });
 
