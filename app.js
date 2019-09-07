@@ -1,26 +1,60 @@
-const express = require('express');
-const app = express();
+const serverList = require('./servers/data.js');
+let runingServers = [];
 
-const HTTPport = 8080;
-const SMTPport = 666;
+openServer(serverList);
 
-app.get('*', (req,res)=>{
-    res.send('Hello world!')
-});
+function openServer(servers){
+    for(let server in servers){
+        if(!servers[server]){
+            console.log("No such server as: " + server);
+        }else {
+            let success = start(servers[server]);
+            if(!success){
+                restart(runingServers, serverList);
+            }
+        }
+    }
+};
 
-app.listen(HTTPport,()=>{
-    console.log("HTTP server runing on port: " + HTTPport);
-});
+async function start(server){
+    try{
+        let tmp = await server['server'].listen(server['port'], (err)=>{
+            if(err) return false;
+            else {
+                console.log(server['type'] + " server started on port: " + server['port']);
+                return true;
+            }
+        });
+        runingServers.push(tmp);
+    }catch (e) {
+        if(e) return false;
+    }
+};
 
+function closeServers(servers){
+    return new  Promise(resolve => {
+        for(let server in servers){
+            servers[server].close();
+            runingServers = runingServers.filter(serv => {
+                return (serv === servers[server]) ? false : true;
+            });
+        }
+        console.log("Servers closed");
+        resolve();
+    });
+}
 
-const net = require('net');
-const server = net.createServer((socket) => {
-    socket.setEncoding('utf8');
-    socket.write('STATUS: 230 | onyame.ml | ESMTP\u000D\u000A');
-}).on('error', (err) => {
+function restart(runing, toStart){
+    console.log("Restarting");
+    closeServers(runing).then(()=>{
+        setTimeout(()=>{
+            openServer(toStart);
+        }, 5000);
+    });
+}
+
+process.on('uncaughtException', (err)=>{
     console.log(err);
+    console.log("Rebooting server");
+    restart(runingServers, serverList);
 });
-
-//server.listen(SMTPport ,() => {
-//    console.log('SMTP server runing on port: ' + SMTPport);
-//});
