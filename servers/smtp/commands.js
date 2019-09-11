@@ -91,7 +91,7 @@ function to(data) {
 }
 
 function msg(data) {
-    let res = '250 | Msg body : | use line with "." to end entering';
+    let res = '354 | Msg body : | use line with "." to end entering';
     let status = true;
     let d = {};
     const com = data.substring(0, 4).toUpperCase();
@@ -111,7 +111,7 @@ function msg(data) {
 function bodyHendler(data){
     let ended = false;
     let returneble = data + '\u000D\u000A';
-    if(data == '.' || 'QUIT'){
+    if(data == '.'){
         ended = true;
         returneble = '';
     }
