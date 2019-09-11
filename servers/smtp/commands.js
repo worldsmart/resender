@@ -39,12 +39,7 @@ function from(data) {
         let arg = data.substring(9, data.length).replace(' ', '');
         if(arg[0] == ':' && arg[1] == '<' && arg[arg.length - 1] == '>'){
             arg = arg.substring(2, arg.length - 1);
-            if(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/.test(arg)){
                 d.sender = arg;
-            }else {
-                status = false;
-                res = '553 | The sender adress <' + arg + '> is invalid [RFC-5321].';
-            }
         }else {
             status = false;
             res = '555 | Syntax error.';
@@ -72,16 +67,11 @@ function to(data) {
         let arg = data.substring(7, data.length).replace(' ', '');
         if(arg[0] == ':' && arg[1] == '<' && arg[arg.length - 1] == '>'){
             arg = arg.substring(2, arg.length - 1);
-            if(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/.test(arg)){
                 if(arg.split('@')[1] == 'onyame.ml') d.receiver = arg;
                 else {
                     status = false;
                     res = '553 | Unsupported mailbox address: ' + arg.split('@')[1];
                 }
-            }else {
-                status = false;
-                res = '553 | The receiver adress <' + arg + '> is invalid [RFC-5321].';
-            }
         }else {
             status = false;
             res = '555 | Syntax error.';
@@ -121,7 +111,7 @@ function msg(data) {
 function bodyHendler(data){
     let ended = false;
     let returneble = data + '\u000D\u000A';
-    if(data == '.'){
+    if(data == '.' || 'QUIT'){
         ended = true;
         returneble = '';
     }

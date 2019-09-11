@@ -8,15 +8,18 @@ const server = net.createServer((socket) => {
     socket.setTimeout(15000);
     let dataString = '';
     let msg = {};
+    console.log('connected');
     socket.on('data', (str)=>{
+        console.log(str);
         for(let data in str){
             if(str[data].charCodeAt(0) == 13){
                 if(dataString.toUpperCase().split(' ')[0] == 'RSET'){
                     reset(socket);
-                }else if (dataString.toUpperCase().split(' ')[0] == 'QUIT'){
+                }else if (dataString.toUpperCase().split(' ')[0] == 'QUIT' && !msg.data){
                     socket.end('221 | closing connection | bb =B\u000D\u000A');
                 }else {
                     let executed = expectedCommand(dataString);
+                    console.log(executed.response)
                     if(executed.status == 'close'){
                         socket.end(executed.response);
                     }else if(!executed.status){
