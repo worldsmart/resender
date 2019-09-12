@@ -5,16 +5,6 @@ const crypto = require("crypto");
 const MailParser = require("mailparser-mit").MailParser;
 const mailparser = new MailParser();
 
-function parseMsg(body){
-    mailparser.write(body);
-    return new Promise(resolve => {
-        mailparser.on("end", function(mail_object){
-            resolve(mail_object);
-        });
-        mailparser.end();
-    });
-}
-
 const server = net.createServer((socket) => {
 let expectedCommand = require('./commands.js');
     socket.setEncoding('utf8');
@@ -86,6 +76,16 @@ let expectedCommand = require('./commands.js');
         socket.write('250 | reset | go ahead!\u000D\u000A');
         dataString = '';
         msg = {};
+    }
+
+    function parseMsg(body){
+        mailparser.write(body);
+        return new Promise(resolve => {
+            mailparser.on("end", function(mail_object){
+                resolve(mail_object);
+            });
+            mailparser.end();
+        });
     }
 });
 
