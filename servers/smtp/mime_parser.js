@@ -56,8 +56,8 @@ function sortData(data){
                     res.text = t.trim();
             }
             if(item.match(/Content-Type:\s*text\/html\s*;/g)){
-                let t = item.match(/\r\n\r\n.*\r\n\r\n/g);
-                if(t) res.html = t[0].trim();
+                let t = item.substring(item.match(/\r\n\r\n.*/).index , item.length);
+                if(t) res.html = t.trim();
             }
             if(item.match(/Content-Disposition:\s*attachment\s*;/g)){
                 let t ={
