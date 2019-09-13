@@ -2,8 +2,7 @@ const net = require('net');
 const fs = require('fs');
 const path = require('path');
 const crypto = require("crypto");
-const MailParser = require("mailparser-mit").MailParser;
-const mailparser = new MailParser();
+const mimeParser = require('./mime_parser.js');
 
 const server = net.createServer((socket) => {
 let expectedCommand = require('./commands.js');
@@ -26,8 +25,8 @@ let expectedCommand = require('./commands.js');
                         socket.write(executed.response);
                     }else {
                         if(executed['ended']){
-                            parseMsg(msg.data).then(body=>{
-                                msg.data = body;
+                            mimeParser(msg.data).then(res=>{
+                                msg.data = res;
                                 msg.id = crypto.randomBytes(16).toString("hex");
                                 fs.readFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), 'utf8', (err, data)=>{
                                     if(err){
@@ -53,7 +52,8 @@ let expectedCommand = require('./commands.js');
                                         });
                                     }
                                 });
-                            });
+                            })
+
                         }else {
                             for(let a in executed.data){
                                 if(msg[a]) msg[a] += executed.data[a];
@@ -76,16 +76,6 @@ let expectedCommand = require('./commands.js');
         socket.write('250 | reset | go ahead!\u000D\u000A');
         dataString = '';
         msg = {};
-    }
-
-    function parseMsg(body){
-        mailparser.write(body);
-        return new Promise(resolve => {
-            mailparser.on("end", function(mail_object){
-                resolve(mail_object);
-            });
-            mailparser.end();
-        });
     }
 });
 
