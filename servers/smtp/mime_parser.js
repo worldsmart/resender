@@ -44,7 +44,7 @@ function sortData(data){
             tmp = tmp[0];
             res.headers['date'] = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2).trim();
         }
-        tmp = data[0].match(/To:\s*.*\r\n/g);
+        tmp = data[0].match(/To:\s*.*@onyame.ml\s*\r\n/gi);
         if(tmp){
             tmp = tmp[0];
             res.headers['to'] = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2).trim();
