@@ -51,9 +51,9 @@ function sortData(data){
         }
         data.forEach(item=>{
             if(item.match(/Content-Type:\s*text\/plain\s*;/g)){
-                let t = item.match(/\r\n\r\n.*\r\n\r\n/g);
+                let t = item.substring(item.match(/\r\n\r\n.*/).index , item.length);
                 if(t)
-                    res.text = t[0].trim();
+                    res.text = t.trim();
             }
             if(item.match(/Content-Type:\s*text\/html\s*;/g)){
                 let t = item.match(/\r\n\r\n.*\r\n\r\n/g);
