@@ -21,7 +21,7 @@ function sortData(data){
             attachments:[]
         };
         if(typeof data == 'string') data = [data];
-        let tmp = data[0].match(/Subject:\s*.*\r\n/g);
+        let tmp = data[0].match(/Subject:\s*.*\r\n/gi);
         if(tmp){
             tmp = tmp[0];
             res.headers.subject = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2);
