@@ -84,11 +84,11 @@ function splitHeaders(headers) {
         const name = from.match(/:\s*(.*)\s*</i);
         if(name) splited.from.name = name[1].trim();
     }
-    const to = headers.match(/To:\s+?\s*(.*)\r\n/i);
+    const to = headers.match(/\r\nTo:\s+?\s*(.*)\r\n/i);
     if (to) splited.to = to[1];
-    const subject = headers.match(/Subject:\s+?\s*(.*)\r\n/i);
+    const subject = headers.match(/\r\nSubject:\s+?\s*(.*)\r\n/i);
     if (subject) splited.subject = subject[1];
-    const date = headers.match(/Date:\s+?\s*(.*)\r\n/i);
+    const date = headers.match(/\r\nDate:\s+?\s*(.*)\r\n/i);
     if (date) splited.date = date[1];
     return splited;
 }
