@@ -1,55 +1,35 @@
 module.exports = (data)=>{
     return new Promise(resolve => {
-        data = splitData(data);
-        sortData(data).then(res=>{
-            resolve(res);
-        });
+        resolve(parseData(getHeaders(data)));
     });
 };
 
-function sortData(data){
-    return new Promise(resolve => {
-        let res = {
-            html:'',
-            text:'',
-            headers:{
-                from:{},
-                to:'',
-                subject:'',
-                date:''
-            },
-            attachments:[]
-        };
-        if(typeof data == 'string') data = [data];
-        let tmp = data[0].match(/Subject:\s*.*\r\n/g);
-        if(tmp){
-            tmp = tmp[0];
-            res.headers.subject = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2);
-        }
-        tmp = data[0].match(/From:\s*.*\r\n/g);
-        if(tmp){
-            tmp = tmp[0];
-            tmp = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2);
-            if(tmp.indexOf('<')){
-                res.headers.from['adress'] = tmp.substring(tmp.indexOf('<') + 1, tmp.indexOf('>'));
-                res.headers.from['name'] = ' ' + ' ' + tmp.substring(0, tmp.indexOf('<'));
-                res.headers.from['name'] += tmp.substring(tmp.indexOf('>') + 1, tmp.length);
-                res.headers.from['name'] = res.headers.from['name'].trim();
-            }else {
-                res.headers.from['name'] = tmp.trim();
-            }
-        }
-        tmp = data[0].match(/Date:\s*.*\r\n/g);
-        if(tmp){
-            tmp = tmp[0];
-            res.headers['date'] = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2).trim();
-        }
-        tmp = data[0].match(/To:\s*.*@onyame.ml\s*\r\n/gi);
-        if(tmp){
-            tmp = tmp[0];
-            res.headers['to'] = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2).trim();
-        }
-        data.forEach(item=>{
+function parseData(data){
+    let res = {};
+    if(data.headers){
+        res['headers'] = splitHeaders(data.headers);
+        const splitter = data.body.match(/boundary\s*=\s*"(.*)"\r\n/ig);
+        if(splitter){
+            splitter.forEach(sp=>{
+                sp = sp.match(/"(.*)"/i);
+                if(sp){
+                    if(typeof data.body == 'string'){
+                        data.body = data.body.split('--' + sp[1]);
+                    }else {
+                        for(let a in data.body){
+                            data.body[a].split('--' + sp[1]).forEach(spt=>{
+                                data.body.push(spt);
+                            });
+                            data.body[a] = undefined;
+                        }
+                    }
+                }
+            });
+            data.body = data.body.filter(conn => {
+                return (conn == undefined) ? false : true;
+            });
+        }else data.body = [data.body];
+        data.body.forEach(item=>{
             if(item.match(/Content-Disposition:\s*attachment\s*;/g)){
                 let t ={
                     name:'',
@@ -65,7 +45,11 @@ function sortData(data){
                 if(r) t.type = r[0].substring(r[0].indexOf(':') + 1, r[0].length).trim();
                 r = item.substring(item.match(/\r\n\r\n/).index + 4, item.length - 2).split('\r\n').join('').trim();
                 t.buffer = r;
-                res.attachments.push(t);
+                if(res['attachments']) res['attachments'].push(t);
+                else {
+                    res['attachments'] = [];
+                    res['attachments'].push(t);
+                }
             }else if(item.match(/Content-Type:\s*text\/plain\s*;/g)){
                 let t = item.substring(item.match(/\r\n\r\n.*/).index , item.length);
                 if(t)
@@ -75,30 +59,51 @@ function sortData(data){
                 if(t) res.html = t.trim();
             }
         });
-        resolve(res);
-    });
+        return res;
+    } else {
+        res.text = data.body;
+        return res;
+    }
 }
 
-function splitData(data) {
-    const spliter = data.match(/boundary\s*=\s*".*"/g);
-    if(spliter){
-        spliter.forEach(sp=>{
-            sp = '--' + sp.substring(sp.indexOf('"') + 1, sp.length - 1);
-            if(typeof data == 'string'){
-                data = data.split(sp);
-            }else {
-                for (let a in data) {
-                    let tmp = data[a].split(sp);
-                    tmp .forEach(d=>{
-                        data.push(d);
-                    });
-                    data[a] = undefined;
-                }
-            }
-        });
-        data = data.filter(conn => {
-            return (conn == undefined) ? false : true;
-        });
+function splitHeaders(headers) {
+    let splited = {
+        from:{
+            name:'',
+            address:''
+        },
+        to:'',
+        subject:'',
+        date:''
+    };
+    let from = headers.match(/From:.*<.*>\r\n/i);
+    if(from){
+        from = from[0];
+        const address = from.match(/<(.*)>/i);
+        if(address) splited.from.address = address[1];
+        const name = from.match(/:\s*(.*)\s*</i);
+        if(name) splited.from.name = name[1].trim();
     }
-    return data;
+    const to = headers.match(/To:\s+?\s*(.*)\r\n/i);
+    if (to) splited.to = to[1];
+    const subject = headers.match(/Subject:\s+?\s*(.*)\r\n/i);
+    if (subject) splited.subject = subject[1];
+    const date = headers.match(/Date:\s+?\s*(.*)\r\n/i);
+    if (date) splited.date = date[1];
+    return splited;
+}
+
+function getHeaders(data){
+    const multipart = data.match(/Content-Type:\s*multipart\/.*;\s*boundary=\s*".*"/i);
+    if(multipart){
+        return {
+            headers:data.substring(0, multipart.index),
+            body:data.substring(multipart.index, data.length)
+        }
+    }else{
+        return {
+            headers:undefined,
+            body:data
+        }
+    }
 }
