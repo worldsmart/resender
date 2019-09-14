@@ -21,7 +21,7 @@ function sortData(data){
             attachments:[]
         };
         if(typeof data == 'string') data = [data];
-        let tmp = data[0].match(/Subject:\s*.*\r\n/gi);
+        let tmp = data[0].match(/Subject:\s*.*\r\n/g);
         if(tmp){
             tmp = tmp[0];
             res.headers.subject = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2);
@@ -50,22 +50,13 @@ function sortData(data){
             res.headers['to'] = tmp.substring(tmp.indexOf(':') + 1 , tmp.length - 2).trim();
         }
         data.forEach(item=>{
-            if(item.match(/Content-Type:\s*text\/plain\s*;/g)){
-                let t = item.substring(item.match(/\r\n\r\n.*/).index , item.length);
-                if(t)
-                    res.text = t.trim();
-            }
-            if(item.match(/Content-Type:\s*text\/html\s*;/g)){
-                let t = item.substring(item.match(/\r\n\r\n.*/).index , item.length);
-                if(t) res.html = t.trim();
-            }
             if(item.match(/Content-Disposition:\s*attachment\s*;/g)){
                 let t ={
                     name:'',
                     type:'',
                     encoding:'',
                     buffer:''
-                }
+                };
                 let r = item.match(/filename\s*=\s*".*"/g);
                 if(r) t.name = r[0].substring(r[0].indexOf('"') + 1, r[0].length - 1).trim();
                 r = item.match(/Content-Transfer-Encoding\s*:\s*.*\s*\r\n/g);
@@ -75,6 +66,13 @@ function sortData(data){
                 r = item.substring(item.match(/\r\n\r\n/).index + 4, item.length - 2).split('\r\n').join('').trim();
                 t.buffer = r;
                 res.attachments.push(t);
+            }else if(item.match(/Content-Type:\s*text\/plain\s*;/g)){
+                let t = item.substring(item.match(/\r\n\r\n.*/).index , item.length);
+                if(t)
+                    res.text = t.trim();
+            }else if(item.match(/Content-Type:\s*text\/html\s*;/g)){
+                let t = item.substring(item.match(/\r\n\r\n.*/).index , item.length);
+                if(t) res.html = t.trim();
             }
         });
         resolve(res);
