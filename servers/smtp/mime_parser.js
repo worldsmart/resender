@@ -42,7 +42,7 @@ function parseData(data){
                 r = item.match(/Content-Transfer-Encoding\s*:\s*.*\s*\r\n/g);
                 if(r) t.encoding = r[0].substring(r[0].indexOf(':') + 1, r[0].length).trim();
                 r = item.match(/Content-Type\s*:\s*.*;/g);
-                if(r) t.type = r[0].substring(r[0].indexOf(':') + 1, r[0].indexOf(';') - 1).trim();
+                if(r) t.type = r[0].substring(r[0].indexOf(':') + 1, r[0].indexOf(';')).trim();
                 r = item.substring(item.match(/\r\n\r\n/).index + 4, item.length - 2).split('\r\n').join('').trim();
                 t.buffer = r;
                 if(res['attachments']) res['attachments'].push(t);
