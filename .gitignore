@@ -2,3 +2,4 @@ node_modules/
 /.idea
 /uploads
 client/node_modules/
+servers/http/vue-client/node_modules/

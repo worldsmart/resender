@@ -33,7 +33,7 @@ let expectedCommand = require('./commands.js');
                                         fs.writeFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), '['+JSON.stringify(msg)+']', (err)=>{
                                             if(err) socket.write('500 | Fs system error\u000D\u000A');
                                             else {
-                                                addMsg(msg.receiver, msg.sender, msg.id);
+                                                addMsg(msg.receiver, msg.sender, msg.id, msg.data.headers.subject);
                                             }
                                             msg = {};
                                             socket.write('250 | Done\u000D\u000A');
@@ -45,7 +45,7 @@ let expectedCommand = require('./commands.js');
                                         fs.writeFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), tmp, (err)=>{
                                             if(err) socket.write('500 | Fs system error\u000D\u000A');
                                             else {
-                                                addMsg(msg.receiver, msg.sender, msg.id);
+                                                addMsg(msg.receiver, msg.sender, msg.id, msg.data.headers.subject);
                                             }
                                             msg = {};
                                             socket.write('250 | Done\u000D\u000A');

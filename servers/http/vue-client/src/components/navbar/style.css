@@ -1,0 +1,8 @@
+nav{
+  background-color: rgb(104,112,175);
+}
+@media (min-width: 990px){
+  .brand-logo{
+    margin-left: 10%;
+  }
+}
