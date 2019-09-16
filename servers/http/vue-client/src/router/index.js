@@ -2,8 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '../components/login/Login'
 import Guard from './../guards/Guard'
+import VueResorse from 'vue-resource'
 
 Vue.use(Router)
+Vue.use(VueResorse)
 
 let router =  new Router({
   mode: 'history',

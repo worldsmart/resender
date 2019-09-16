@@ -2,4 +2,12 @@ footer{
   margin-top: auto;
   height: auto;
   background-color: rgb(104,112,175);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.copiright{
+  margin: 5px;
+  color: #fff;
+  justify-self: center;
 }
