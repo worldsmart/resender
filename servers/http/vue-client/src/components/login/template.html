@@ -9,6 +9,7 @@
       <input v-model="data.password" onblur="" @input="passwordValidate($event.target)" id="password" type="password" style="color: rgb(71,69,84)">
       <label for="password" style="color: rgb(71,69,84)">Password</label>
     </div>
+    <div class="danger" v-if="errors.text">{{ errors.text }}</div>
     <div @click="onSubmit()" class="btn waves-effect waves-light submit" >Submit
       <i class="material-icons right">send</i>
     </div>

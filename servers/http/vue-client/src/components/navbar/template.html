@@ -1,10 +1,16 @@
 <div>
-  <nav>
+  <nav @click="loggedIn = true">
     <div class="nav-wrapper navbar">
-      <a href="" class="brand-logo"><router-link to="/">MAILER</router-link></a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-
-      </ul>
+      <a href="/" class="brand-logo">MAILER</a>
+      <div class="navItem">
+        <ul v-if="loggedIn" id="nav-mobile" class="right hide-on-med-and-down">
+          <li><router-link class="navLink" to="/">All mails</router-link></li>
+          <li><router-link class="navLink" to="/new">New</router-link></li>
+          <li><router-link class="navLink" to="/spam">Spam</router-link></li>
+          <li @click="logout()"><router-link class="navLink" to="#">Logout</router-link></li>
+          <li><div id="email" style="margin:0 0 0 20px ">{{ user.email + '@onyame.ml' }}</div></li>
+        </ul>
+      </div>
     </div>
   </nav>
 </div>

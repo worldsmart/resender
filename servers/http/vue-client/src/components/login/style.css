@@ -26,6 +26,10 @@
   margin: 5px 15%;
   background-color: rgb(104,112,175);
 }
+.danger{
+  color: rgb(209, 13, 13);
+  padding: 2px 10px;
+}
 .input-field label {
   color: rgb(71,69,84);
 }

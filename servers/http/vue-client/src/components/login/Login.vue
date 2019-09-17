@@ -1,13 +1,16 @@
 <template src="./template.html"></template>
 
 <script>
+  import DataService from './../../DataService'
+
   export default {
     name:'login',
     data(){
       return {
         errors:{
           email:false,
-          password:false
+          password:false,
+          text:''
         },
         data:{
           email:'',
@@ -51,7 +54,24 @@
       onSubmit:function () {
         if(!this.errors.email && !this.errors.password && this.data.email && this.data.password){
           this.loading = true;
-
+          const headers = {
+            'Content-Type': 'application/json;charset=utf-8'
+          };
+          this.$http.post('/api/server_login', {
+            email:this.data.email,
+            password:this.data.password
+          }, {headers}).then(data=>{
+            this.loading = false;
+            if(data.body.jwt){
+              localStorage.setItem('jwt', data.body.jwt);
+              localStorage.setItem('email', data.body.email);
+              DataService.user = data.body;
+              this.$router.push('/');
+              M.toast({html: 'You are successfully logged in!'});
+            }else {
+              this.errors.text = '*' + data.body.err;
+            }
+          });
         }
       }
     }

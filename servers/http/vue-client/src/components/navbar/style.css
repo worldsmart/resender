@@ -5,4 +5,13 @@ nav{
   .brand-logo{
     margin-left: 10%;
   }
+  .navItem{
+    margin-right: 10%;
+  }
+  .navLink{
+    padding: 0px 25px;
+  }
+  .link-active{
+    background-color: red;
+  }
 }

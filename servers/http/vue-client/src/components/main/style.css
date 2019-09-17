@@ -1,0 +1,28 @@
+@media (min-width: 990px){
+  .main{
+    min-width: 100%;
+    flex-grow: 1;
+  }
+  .mails{
+    background-color: rgb(38,84,146);
+    margin: 15px 15px 5px 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .mail{
+    background-color: white;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    box-shadow: inset -1px 1px 10px 1px rgba(0,0,0,0.2);
+  }
+  .box{
+
+  }
+}
+@media (max-width: 989px){
+  .sidebar{
+    display: none;
+  }
+}

@@ -1,13 +1,12 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const app = express();
-const MailParser = require("mailparser-mit").MailParser;
+const bodyParser = require('body-parser');
 
-app.use(express.static(path.join(__dirname, 'client')));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'dist')));
 
-app.get('*', (req,res)=>{
-    res.sendFile(path.join(__dirname, 'client', 'index.html'))
-});
+const router = require('./routes/router');
+app.all('*', router);
 
 module.exports = app;

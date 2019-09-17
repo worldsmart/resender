@@ -1,0 +1,22 @@
+<div class="row main">
+
+  <div  class="col s3 sidebar">
+    text
+  </div>
+
+  <div class="col s9">
+    <div class="mails">
+      <div v-for="a in msg" class="col box">
+          <div class="mail">
+            <div v-if="a['mailbox']">
+              {{a['mailbox']}}
+            </div>
+            <div v-if="a['subject']">
+              {{a['subject']}}
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+</div>
