@@ -15,18 +15,16 @@
   function getMsg() {
     const headers = {
       'Content-Type': 'application/json;charset=utf-8',
-      'Authorization':localStorage.getItem('jwt')
+      'Authorization':localStorage.getItem('jwt'),
+      'x-onlyfor':this.$route.params.id
     };
-    this.$http.get('/api/get_mails', {headers}).then((res)=>{
-      if(res.body['admin']){
-        if(res.body['data']){
-          res.body['data'].forEach(msg=>{
+    this.$http.get('/api/get_posts', {headers}).then((res)=>{
+        if(res.body){
+          console.log(res.body)
+          res.body.forEach(msg=>{
             this.msg.unshift(msg);
           });
         }
-      }else {
-
-      }
     });
   }
 

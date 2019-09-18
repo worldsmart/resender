@@ -1,0 +1,25 @@
+<div class="row main">
+
+  <div  class="col s3 sidebar">
+    text
+  </div>
+
+  <div class="col s9">
+    <div class="mails" style="max-width: 100%;">
+      <div v-for="a in msg" class="col box">
+          <router-link :to="'/' + a['id']" class="mail">
+            <div v-if="a['from']" class="from">
+              {{a['from']}}
+            </div>
+            <div v-if="a['subject']" class="subject">
+              {{a['subject']}}
+            </div>
+            <div v-if="!a['read']" class="newMsg">
+              *New
+            </div>
+          </router-link>
+      </div>
+    </div>
+  </div>
+
+</div>

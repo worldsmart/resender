@@ -45,12 +45,13 @@ router.get('/api/get_mails', (req,res)=>{
                         for(let a in files){
                             files[a] = {
                                 mailbox:files[a].match(/(.*)\.json/i)[1] + '@onyame.ml',
-                                subject:'Mailbox'
+                                subject:'Mailbox',
+                                link:'mailboxes/'+ files[a].match(/(.*)\.json/i)[1]
                             };
-                            files = {data:files};
-                            files['admin'] = true;
-                            res.json(files);
                         }
+                        files = {data:files};
+                        files['admin'] = true;
+                        res.json(files);
                     }
                 });
             }else res.json({err:'wrong user'});
@@ -60,9 +61,43 @@ router.get('/api/get_mails', (req,res)=>{
     });
 });
 
+router.get('/api/get_posts',(req,res)=>{
+    ifAdmin(req.headers.authorization).then(r=>{
+        if(r){
+            returnMails(req.headers['x-onlyfor']).then(data=>{
+                res.json(data);
+            });
+        }else{
+            res.json({err:'wrong user'});
+        }
+    });
+});
+
+router.get('/api/get_admin', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(r=>{
+        if(r.admin) res.json({success:true});
+        else res.json({success:false});
+    });
+});
+
 router.get('*', (req,res)=>{
     res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'))
 });
+
+function returnMails(mailbox) {
+    return new Promise(resolve => {
+        fs.readFile(path.join(__dirname, '/../../', 'smtp', 'msgData.json'), 'utf8', (err,data)=>{
+            if(err || !data)resolve([]);
+            else {
+                let tmp = JSON.parse(data);
+                tmp = tmp.filter(mail=>{
+                    return mail.receiver == mailbox + '@onyame.ml' ?  true : false
+                });
+                resolve(tmp);
+            }
+        });
+    });
+}
 
 function ifAdmin(token) {
     return new Promise(resolve =>{
