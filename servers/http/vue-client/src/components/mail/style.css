@@ -1,0 +1,16 @@
+.mailbox{
+  margin: 3%;
+}
+.mail1{
+  padding: 8px;
+  display: flex;
+}
+.from{
+  width: 25%;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 8px;
+}
+.subject{
+  flex-grow: 1;
+}

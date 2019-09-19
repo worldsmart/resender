@@ -8,10 +8,10 @@
     <div class="mails">
       <div v-for="a in msg" class="col box">
           <router-link :to="a['link']" class="mail">
-            <div v-if="a['mailbox']">
+            <div v-if="a['mailbox']" class="from">
               {{a['mailbox']}}
             </div>
-            <div v-if="a['subject']">
+            <div v-if="a['subject']" class='subject'>
               {{a['subject']}}
             </div>
           </router-link>

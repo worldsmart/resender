@@ -16,9 +16,27 @@
     display: flex;
     box-shadow: inset -1px 1px 10px 1px rgba(0,0,0,0.2);
     color: black;
+    padding: 8px;
+    width: 100%;
+    align-items: center;
   }
   .box{
     padding: 8px 6px;
+    display: flex;
+    overflow: hidden;
+  }
+  .from{
+    width:25%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .subject{
+    flex-grow: 1;
+    margin: 5px 10px;
+    border-left: 1px solid;
+    padding-left: 10px;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
 @media (max-width: 989px){

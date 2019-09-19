@@ -34,6 +34,51 @@ router.get('/api/authorization', (req,res)=>{
     });
 });
 
+router.get('/api/mail', (req,res)=>{
+    jwt.verify(req.headers.authorization, 'q2f5236s', function(err, decoded) {
+        if(err || !decoded){
+            res.json({err:'Bad token'});
+        }
+        else {
+            const result = getUser(decoded.email, decoded.password);
+            if(result){
+                fs.readFile(path.join(__dirname, '/../../', 'smtp', 'msgData.json'), 'utf8', (err,mData)=>{
+                    if(err || !mData) res.json({err:'Server error'});
+                    else {
+                        let msgData = JSON.parse(mData);
+                        msgData = msgData.filter(msg=>{
+                            return msg.id == req.headers['x-onlyfor'] ? true : false
+                        });
+                        if(msgData && (result[0].email == msgData[0].receiver || result[0].admin)){
+                            let file = msgData[0].receiver.match(/(.*)@onyame.ml/i);
+                            fs.readFile(path.join(__dirname, '/../../', 'smtp', 'msg', file[1] + '.json'), 'utf8', (err,data)=>{
+                                if(err || !data) res.json({err:'Server error'});
+                                else {
+                                    let tmp = JSON.parse(data);
+                                    tmp = tmp.filter(msg=>{
+                                        return msg.id == req.headers['x-onlyfor'] ? true : false
+                                    });
+                                    if(tmp){
+                                        if(!msgData[0].read){
+                                            let t = JSON.parse(mData);
+                                            t.forEach(msg=>{
+                                                if(msg.id == req.headers['x-onlyfor']) msg.read = true;
+                                            });
+                                            fs.writeFile(path.join(__dirname, '/../../', 'smtp', 'msgData.json'), JSON.stringify(t), ()=>{});
+                                        }
+                                        res.json(tmp[0]);
+                                    }else res.json({err:'No such email'});
+                                }
+                            })
+                        }else res.json({err:'Access denied'});
+                    }
+                });
+            }
+            else res.json({err:'Bad user'});
+        }
+    });
+});
+
 router.get('/api/get_mails', (req,res)=>{
     ifAdmin(req.headers.authorization).then(r=>{
         if(r){

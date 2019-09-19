@@ -15,7 +15,10 @@
               {{a['subject']}}
             </div>
             <div v-if="!a['read']" class="newMsg">
-              *New
+              <i class="material-icons">email</i>
+            </div>
+            <div v-if="a['read']" class="newMsg">
+              <i class="material-icons">drafts</i>
             </div>
           </router-link>
       </div>
