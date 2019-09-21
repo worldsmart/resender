@@ -3,10 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require("crypto");
 const MailParser = require("mailparser-mit").MailParser;
-const dns = require('dns');
 
 const server = net.createServer((socket) => {
-    console.log(socket.address())
 let expectedCommand = require('./commands.js');
     socket.setEncoding('utf8');
     socket.setTimeout(15000);
@@ -30,7 +28,8 @@ let expectedCommand = require('./commands.js');
                             msg.id = crypto.randomBytes(16).toString("hex");
                             let mailparser = new MailParser();
                             mailparser.on("end", function(mail){
-                                console.log(mail);
+                                msg.data = mail;
+                                console.log(msg);
                             });
                             mailparser.write(msg.data);
                             mailparser.end();
