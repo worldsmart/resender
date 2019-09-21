@@ -2,9 +2,11 @@ const net = require('net');
 const fs = require('fs');
 const path = require('path');
 const crypto = require("crypto");
-const mimeParser = require('./mime_parser.js');
+const MailParser = require("mailparser-mit").MailParser;
+const dns = require('dns');
 
 const server = net.createServer((socket) => {
+    console.log(socket.address())
 let expectedCommand = require('./commands.js');
     socket.setEncoding('utf8');
     socket.setTimeout(15000);
@@ -25,34 +27,13 @@ let expectedCommand = require('./commands.js');
                         socket.write(executed.response);
                     }else {
                         if(executed['ended']){
-                            mimeParser(msg.data).then(res=>{
-                                msg.data = res;
-                                msg.id = crypto.randomBytes(16).toString("hex");
-                                fs.readFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), 'utf8', (err, data)=>{
-                                    if(err){
-                                        fs.writeFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), '['+JSON.stringify(msg)+']', (err)=>{
-                                            if(err) socket.write('500 | Fs system error\u000D\u000A');
-                                            else {
-                                                addMsg(msg.receiver, msg.sender, msg.id, msg.data.headers.subject);
-                                            }
-                                            msg = {};
-                                            socket.write('250 | Done\u000D\u000A');
-                                        });
-                                    }else {
-                                        let tmp = JSON.parse(data);
-                                        tmp.push(msg);
-                                        tmp = JSON.stringify(tmp);
-                                        fs.writeFile(path.join(__dirname, '/msg/', msg.receiver.split('@')[0] + '.json'), tmp, (err)=>{
-                                            if(err) socket.write('500 | Fs system error\u000D\u000A');
-                                            else {
-                                                addMsg(msg.receiver, msg.sender, msg.id, msg.data.headers.subject);
-                                            }
-                                            msg = {};
-                                            socket.write('250 | Done\u000D\u000A');
-                                        });
-                                    }
-                                });
-                            })
+                            msg.id = crypto.randomBytes(16).toString("hex");
+                            let mailparser = new MailParser();
+                            mailparser.on("end", function(mail){
+                                console.log(mail);
+                            });
+                            mailparser.write(msg.data);
+                            mailparser.end();
 
                         }else {
                             for(let a in executed.data){
