@@ -1,22 +1,29 @@
-<div class="row main">
+<div class="root">
+  <div class="row" style="height: 100%;padding: 5px;box-shadow: -1px 1px 2px rgba(0,0,0,0.2)">
 
-  <div  class="col s3 sidebar">
-    text
-  </div>
-
-  <div class="col s9">
-    <div class="mails">
-      <div v-for="a in msg" class="col box">
-          <router-link :to="a['link']" class="mail">
-            <div v-if="a['mailbox']" class="from">
-              {{a['mailbox']}}
-            </div>
-            <div v-if="a['subject']" class='subject'>
-              {{a['subject']}}
-            </div>
-          </router-link>
+    <div class="col s3 side">
+      main
+    </div>
+    <div class="col s9 page">
+      <div style="display: flex;align-items: center;justify-content: flex-end">
+        <div style="margin: 5px">
+          {{counter}} of 1
+        </div>
+        <div class="arrows">
+          <i @click="counter--" class="material-icons">chevron_left</i>
+          <i @click="counter++" class="material-icons" >chevron_right</i>
+        </div>
+      </div>
+      <div class="massages">
+        <div :class="counter ? 'read' : ''" class="msg">
+          <div class="msg-header">
+            <div class="header-item" >text</div>
+            <div class="header-item" style="text-align: end">text</div>
+          </div>
+          <div class="subj">texzxt2</div>
+        </div>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>

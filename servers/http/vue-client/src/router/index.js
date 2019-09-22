@@ -2,8 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '../components/login/Login'
 import Main from '../components/main/Main'
-import Posts from '../components/posts/Posts'
-import Mail from '../components/mail/Mail'
 import Guard from './../guards/Guard'
 import AdminGuard from './../guards/AdminGuard'
 import VueResorse from 'vue-resource'
@@ -22,17 +20,16 @@ let router =  new Router({
     {
       path:'/',
       name:'app-main',
-      component:Main
+      component:Main,
+      props:{mailFor:''}
     },
     {
       path:'/:id',
       name:'msg',
-      component:Mail
     },
     {
       path:'/mailboxes/:id',
       name:'mailbox',
-      component:Posts,
       beforeEnter:AdminGuard
     },
     {

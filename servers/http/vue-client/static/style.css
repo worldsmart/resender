@@ -2,7 +2,11 @@
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url('./materialize/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2') format('woff2');
+  src: url(https://fonts.gstatic.com/s/materialicons/v48/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
+html{
+  background-color: rgb(250,251,194);
 }
 
 .material-icons {

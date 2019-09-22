@@ -2,32 +2,24 @@
 
 <script scoped >
   export default {
-   props:['onlyFor']
-    ,
+    name:'app-main',
+    props:['mailFor'],
     data:function () {
       return{
-        msg:[]
+        counter:1
       }
     },
-    created:getMsg
-  }
-
-  function getMsg() {
-    const headers = {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Authorization':localStorage.getItem('jwt')
-    };
-    this.$http.get('/api/get_mails', {headers}).then((res)=>{
-      if(res.body['admin']){
-        if(res.body['data']){
-          res.body['data'].forEach(msg=>{
-            this.msg.unshift(msg);
-          });
-        }
-      }else {
-
-      }
-    });
+    created:function () {
+      const headers = {
+        'Content-Type':'application/json',
+        authorization:localStorage.getItem('jwt'),
+        'X-for':this.mailFor,
+        'X-index':'1'
+      };
+      this.$http.get('/api/massages',{headers}).then(res=>{
+        console.log(res.body)
+      });
+    }
   }
 
 </script>
