@@ -20,8 +20,12 @@ let router =  new Router({
     {
       path:'/',
       name:'app-main',
-      component:Main,
-      props:{mailFor:''}
+      component:Main
+    },
+    {
+      path:'/mailbox/:id',
+      name:'app-mailbox',
+      component:Main
     },
     {
       path:'/:id',

@@ -6,21 +6,33 @@
     </div>
     <div class="col s9 page">
       <div style="display: flex;align-items: center;justify-content: flex-end">
+        <div @click="markAll" style="margin: 5px 10px 0 0;cursor: pointer;margin-right: auto;">
+          <i class="material-icons">done_all</i>
+        </div>
+        <div @click="reload" style="margin: 5px 10px 0 0;cursor: pointer">
+          <i class="material-icons">refresh</i>
+        </div>
         <div style="margin: 5px">
-          {{counter}} of 1
+          {{counter}} of {{maxPage}}
         </div>
         <div class="arrows">
-          <i @click="counter--" class="material-icons">chevron_left</i>
-          <i @click="counter++" class="material-icons" >chevron_right</i>
+          <i @click="clickLeft" class="material-icons">chevron_left</i>
+          <i @click="clickRight" class="material-icons" >chevron_right</i>
         </div>
       </div>
-      <div class="massages">
-        <div :class="counter ? 'read' : ''" class="msg">
-          <div class="msg-header">
-            <div class="header-item" >text</div>
-            <div class="header-item" style="text-align: end">text</div>
-          </div>
-          <div class="subj">texzxt2</div>
+      <div v-if="loading" class="progress">
+        <div class="indeterminate"></div>
+      </div>
+      <div class="massages" id="msgBox">
+        <div v-for="a in msgData" style="display: flex;width: 100%;align-items: center">
+          <input @click="addSelect($event.target.value)" :value="a.id ? a.id : ''" type="checkbox" class="checkboxMsg">
+          <router-link :to="a.id ? a.id : ''" :class="a.read ? 'read' : ''" class="msg">
+            <div class="msg-header">
+              <div class="header-item" >{{a.from}}</div>
+              <div class="header-item" style="text-align: end;color: rgb(16, 146, 232);">{{a.date}}</div>
+            </div>
+            <div class="subj">{{a.subject}}</div>
+          </router-link>
         </div>
       </div>
     </div>

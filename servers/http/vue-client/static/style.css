@@ -6,7 +6,8 @@
 }
 
 html{
-  background-color: rgb(250,251,194);
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .material-icons {

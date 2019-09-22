@@ -36,16 +36,16 @@ router.get('/api/authorization', (req,res)=>{
 
 router.get('/api/massages',(req,res)=>{
     ifAdmin(req.headers.authorization).then(user=>{
-        console.log(user)
         if(req.headers['x-for'] && user.admin){
-            let msgs = getMsg(req.headers['x-for'], req.headers['x-index']);
-            console.log(msgs)
+            getMsg(req.headers['x-for'], req.headers['x-index']).then(ms=>{
+                res.json(ms);
+            });
         }else {
-            let msgs = getMsg(user.email, req.headers['x-index']);
-            console.log(msgs)
+            getMsg(user.email, req.headers['x-index']).then(ms=>{
+                res.json(ms);
+            });
         }
     });
-    res.json({'f':'f'})
 });
 
 router.get('/api/get_admin', (req,res)=>{
@@ -60,10 +60,29 @@ router.get('*', (req,res)=>{
 });
 
 function getMsg(user, index){
-    fs.readFile(path.join(__dirname, '/../', 'smtp', 'msgData', user + '.json'), 'utf8', (err,file)=>{
-        console.log(file);
+    return new Promise(resolve => {
+        fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user + '.json'), 'utf8', (err,file)=>{
+            if(err || !file) resolve([]);
+            else {
+                let tmp = JSON.parse(file);
+                if(!tmp) resolve();
+                else {
+                    tmp = tmp.filter(msg=>{
+                        return msg.spam ? false : true
+                    });
+                    let msgs = [];
+                    const page = 20;
+                    for(let i = page;i > 0;i--){
+                        msgs.unshift(tmp[tmp.length - i - page * index]);
+                    }
+                    msgs = msgs.filter(msg=>{
+                        return !msg ? false : true
+                    });
+                    resolve({lengthMsg:tmp.length,data:msgs});
+                }
+            }
+        });
     });
-    return {user, index}
 }
 
 function ifAdmin(token) {
