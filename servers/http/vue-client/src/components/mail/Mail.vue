@@ -24,7 +24,7 @@
             this.msg.attachments.forEach(atachment=>{
               console.log(atachment)
               atachment.content.data = new Uint8Array(atachment.content.data);
-              atachment.content['url'] = URL.createObjectURL(new Blob([atachment.content.data]));
+              atachment.content['url'] = URL.createObjectURL(new Blob([atachment.content.data], {type : atachment.contentType}));
             });
           }
           this.$forceUpdate();
