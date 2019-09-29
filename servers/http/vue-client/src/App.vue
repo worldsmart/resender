@@ -1,5 +1,5 @@
 <template>
-  <div id="app" style="height: 100vh;display: flex;flex-direction: column;overflow:hidden">
+  <div id="app" style="min-height: 100vh;display: flex;flex-direction: column;overflow:hidden">
     <navbar></navbar>
     <router-view></router-view>
     <app-footer></app-footer>

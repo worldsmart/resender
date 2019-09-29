@@ -2,7 +2,7 @@
 
 <script scoped >
   export default {
-    name:'app-main',
+    name:'app-new',
     data:function () {
       return{
         counter:1,
@@ -77,7 +77,7 @@
           'X-for':this.$route.params.id,
           'X-index':index.toString(),
           'X-filter':this.filter,
-          'X-type':'default'
+          'X-type':'new'
         };
         this.$http.get('/api/massages',{headers}).then(res=>{
           this.loading = false;

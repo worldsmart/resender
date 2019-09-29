@@ -1,0 +1,10 @@
+<ul class="collection msg">
+  <li class="collection-item">From:&nbsp;{{msg.from}}</li>
+  <li class="collection-item">To:&nbsp;{{msg.to}}</li>
+  <li class="collection-item">Subject:&nbsp;{{msg.subject}}</li>
+  <li class="collection-item">Date:&nbsp;{{msg.date}}</li>
+  <li class="collection-item">Post server:&nbsp;{{msg.server}}</li>
+  <li class="collection-item" v-if="msg.html" v-html="msg.html"></li>
+  <li class="collection-item" v-if="!msg.html" v-text="msg.text"></li>
+  <li class="collection-item" ><li class="collection-item" v-if="msg.attachments" v-for="a in msg.attachments"><a :href="a.content.url" download >{{a.fileName}}</a></li></li>
+</ul>

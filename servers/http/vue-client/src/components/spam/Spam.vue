@@ -2,7 +2,7 @@
 
 <script scoped >
   export default {
-    name:'app-main',
+    name:'app-spam',
     data:function () {
       return{
         counter:1,
@@ -77,7 +77,7 @@
           'X-for':this.$route.params.id,
           'X-index':index.toString(),
           'X-filter':this.filter,
-          'X-type':'default'
+          'X-type':'spam'
         };
         this.$http.get('/api/massages',{headers}).then(res=>{
           this.loading = false;
@@ -112,7 +112,7 @@
           }
         });
       },
-      addToSpmam:function () {
+      removeFromSpmam:function () {
         let tmp = '';
         for( let i = 0;i < this.multiSelect.length; i++){
           tmp += this.multiSelect[i] + ',';
@@ -123,10 +123,10 @@
           'X-index':tmp,
           'X-for':this.$route.params.id
         };
-        this.$http.get('/api/addToSpam',{headers}).then(res=>{
+        this.$http.get('/api/removeFromSpam',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) added to spam'});
+            M.toast({html: 'Massage(s) removed from spam'});
             this.getMsgs(this.counter - 1);
           }
         });

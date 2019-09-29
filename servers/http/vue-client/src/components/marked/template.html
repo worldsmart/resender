@@ -6,7 +6,7 @@
       <div class="functions">
         <div @click="delMsg" class="item">Delete</div>
         <div @click="addToSpmam" class="item">Mark spam</div>
-        <div @click="mark" class="item">Mark</div>
+        <div @click="unmark" class="item">Unmark</div>
         <div @click="read" class="item">Mark as read</div>
       </div>
       <div style="align-self: center;">
@@ -39,7 +39,7 @@
       <div class="massages" id="msgBox">
         <div v-for="a in msgData" style="display: flex;width: 100%;align-items: center">
           <input @click="addSelect($event.target.value)" :value="a.id ? a.id : ''" type="checkbox" class="checkboxMsg">
-          <router-link  :to="a.id ? $route.params.id ? '/mailbox/' + $route.params.id + '/' + a.id : '/' + a.id : '/'" :class="a.read ? 'read' : ''" class="msg">
+          <router-link  :to="a.id ? '/' + a.id : '/'" :class="a.read ? 'read' : ''" class="msg">
             <div class="msg-header">
               <div class="header-item" >{{a.from}}</div>
               <div class="header-item" style="text-align: end;color: rgb(16, 146, 232);">{{a.date}}</div>

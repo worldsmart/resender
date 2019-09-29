@@ -2,7 +2,7 @@
 
 <script scoped >
   export default {
-    name:'app-main',
+    name:'app-marked',
     data:function () {
       return{
         counter:1,
@@ -77,7 +77,7 @@
           'X-for':this.$route.params.id,
           'X-index':index.toString(),
           'X-filter':this.filter,
-          'X-type':'default'
+          'X-type':'marked'
         };
         this.$http.get('/api/massages',{headers}).then(res=>{
           this.loading = false;
@@ -131,7 +131,7 @@
           }
         });
       },
-      mark:function () {
+      unmark:function () {
         let tmp = '';
         for( let i = 0;i < this.multiSelect.length; i++){
           tmp += this.multiSelect[i] + ',';
@@ -142,10 +142,10 @@
           'X-index':tmp,
           'X-for':this.$route.params.id
         };
-        this.$http.get('/api/mark',{headers}).then(res=>{
+        this.$http.get('/api/unmark',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) marked'});
+            M.toast({html: 'Massage(s) unmarked'});
             this.getMsgs(this.counter - 1);
           }
         });

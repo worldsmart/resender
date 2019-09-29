@@ -37,12 +37,310 @@ router.get('/api/authorization', (req,res)=>{
 router.get('/api/massages',(req,res)=>{
     ifAdmin(req.headers.authorization).then(user=>{
         if(req.headers['x-for'] && user.admin){
-            getMsg(req.headers['x-for'], req.headers['x-index']).then(ms=>{
+            getMsg(req.headers['x-for'], req.headers['x-index'], req.headers['x-filter'], req.headers['x-type']).then(ms=>{
                 res.json(ms);
             });
         }else {
-            getMsg(user.email, req.headers['x-index']).then(ms=>{
+            getMsg(user.email, req.headers['x-index'], req.headers['x-filter'],req.headers['x-type']).then(ms=>{
                 res.json(ms);
+            });
+        }
+    });
+});
+
+router.get('/api/mailboxes',(req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(user.admin){
+            fs.readdir(path.join(__dirname, '/../..', 'smtp', 'msgData'), (err,file)=>{
+                if(err || !file) res.json({'err':'reading error'});
+                else {
+                    res.json(file);
+                }
+            });
+        }else {
+            res.json({'err':'access denied'});
+        }
+    });
+});
+
+router.get('/api/deleteMsg', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(!user || !req.headers['x-index']){
+            res.json({'err':true});
+        }else {
+            req.headers['x-index'] = req.headers['x-index'].split(',');
+            req.headers['x-index'] = req.headers['x-index'].filter(i=>{
+                return i ? true : false
+            });
+            if(user.admin && req.headers['x-for']){
+                user.email = req.headers['x-for'];
+            }
+            if(req.headers['x-index'][0]){
+                fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), 'utf8', (err,file)=>{
+                    if(err || !file)res.json({'err':'no file'});
+                    else {
+                        let tmp = JSON.parse(file);
+                        tmp = tmp.filter(row=>{
+                            for(let i = 0; i < req.headers['x-index'].length;i++){
+                                if(row.id == req.headers['x-index'][i]) return false;
+                            }
+                            return true;
+                        });
+                        fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), JSON.stringify(tmp),(err)=>{
+                            fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msg', user.email + '.json'), 'utf8', (err,f)=>{
+                                let t = JSON.parse(f);
+                                t = t.filter(row=>{
+                                    for(let i = 0; i < req.headers['x-index'].length;i++){
+                                        if(row.id == req.headers['x-index'][i]) return false;
+                                    }
+                                    return true;
+                                });
+                                fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msg', user.email + '.json'), JSON.stringify(t),(err)=>{
+                                    res.json({'err':false});
+                                });
+                            });
+                        });
+                    }
+                });
+            }else res.json({'err':true});
+        }
+    });
+});
+
+router.get('/api/addToSpam', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(!user || !req.headers['x-index']){
+            res.json({'err':true});
+        }else {
+            req.headers['x-index'] = req.headers['x-index'].split(',');
+            req.headers['x-index'] = req.headers['x-index'].filter(i=>{
+                return i ? true : false
+            });
+            if(user.admin && req.headers['x-for']){
+                user.email = req.headers['x-for'];
+            }
+            if(req.headers['x-index'][0]){
+                fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), 'utf8', (err,file)=> {
+                    if (err || !file)res.json({'err':true});
+                    else {
+                        let tmp = JSON.parse(file);
+                        tmp.forEach(msg=>{
+                            req.headers['x-index'].forEach(id=>{
+                                if(msg.id == id) msg.spam = true;
+                            });
+                        });
+                        fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), JSON.stringify(tmp), err=>{
+                            if (err || !file)res.json({'err':true});
+                            else {
+                                fs.readFile(path.join(__dirname, '/../..', 'smtp', 'spam', user.email + '.json'), 'utf8', (err,file)=> {
+                                    tmp = tmp.filter(m=>{
+                                        for(let i =0;i < req.headers['x-index'].length;i++){
+                                            if(m.id == req.headers['x-index'][i]) return true;
+                                        }
+                                        return false
+                                    });
+                                    let t = [];
+                                    tmp.forEach(m=>{
+                                        t.push({"address":m.from.substring(m.from.indexOf('<') + 1, m.from.indexOf('>'))});
+                                    });
+                                    if (err || !file){
+                                        fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'spam', user.email + '.json'), JSON.stringify(t),err=>{
+                                            if(err) res.json({'err':true});
+                                            else res.json({'err':false});
+                                        });
+                                    }
+                                    else {
+                                        let f = JSON.parse(file);
+                                        t.forEach(a=>{
+                                            for(let i = 0;i < f.length;i++){
+                                                if(f[i].address == a.address) continue;
+                                            }
+                                                f.push(a);
+                                        });
+                                        fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'spam', user.email + '.json'), JSON.stringify(t),err=>{
+                                            if(err) res.json({'err':true});
+                                            else res.json({'err':false});
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                    }
+                });
+            }else res.json({'err':true});
+        }
+    });
+});
+
+router.get('/api/mark', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(!user || !req.headers['x-index']){
+            res.json({'err':true});
+        }else {
+            req.headers['x-index'] = req.headers['x-index'].split(',');
+            req.headers['x-index'] = req.headers['x-index'].filter(i => {
+                return i ? true : false
+            });
+            if (user.admin && req.headers['x-for']) {
+                user.email = req.headers['x-for'];
+            }
+            fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), 'utf8', (err,file)=> {
+                if(err || !file) res.json({'err':true});
+                else {
+                    let tmp = JSON.parse(file);
+                    tmp.forEach(msg=>{
+                        req.headers['x-index'].forEach(index=>{
+                            if(msg.id == index){
+                                msg['marked'] = true;
+                            }
+                        });
+                    });
+                    fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), JSON.stringify(tmp), err=>{
+                        if(err) res.json({'err':true});
+                        else res.json({'err':false});
+                    });
+                }
+            });
+        }
+    });
+});
+
+router.get('/api/read', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(!user || !req.headers['x-index']){
+            res.json({'err':true});
+        }else {
+            req.headers['x-index'] = req.headers['x-index'].split(',');
+            req.headers['x-index'] = req.headers['x-index'].filter(i => {
+                return i ? true : false
+            });
+            if (user.admin && req.headers['x-for']) {
+                user.email = req.headers['x-for'];
+            }
+            fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), 'utf8', (err,file)=> {
+                if(err || !file) res.json({'err':true});
+                else {
+                    let tmp = JSON.parse(file);
+                    tmp.forEach(msg=>{
+                        req.headers['x-index'].forEach(index=>{
+                            if(msg.id == index){
+                                msg['read'] = true;
+                            }
+                        });
+                    });
+                    fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), JSON.stringify(tmp), err=>{
+                        if(err) res.json({'err':true});
+                        else res.json({'err':false});
+                    });
+                }
+            });
+        }
+    });
+});
+
+router.get('/api/unmark', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(!user || !req.headers['x-index']){
+            res.json({'err':true});
+        }else {
+            req.headers['x-index'] = req.headers['x-index'].split(',');
+            req.headers['x-index'] = req.headers['x-index'].filter(i => {
+                return i ? true : false
+            });
+            if (user.admin && req.headers['x-for']) {
+                user.email = req.headers['x-for'];
+            }
+            fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), 'utf8', (err,file)=> {
+                if(err || !file) res.json({'err':true});
+                else {
+                    let tmp = JSON.parse(file);
+                    tmp.forEach(msg=>{
+                        req.headers['x-index'].forEach(index=>{
+                            if(msg.id == index){
+                                msg['marked'] = false;
+                            }
+                        });
+                    });
+                    fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), JSON.stringify(tmp), err=>{
+                        if(err) res.json({'err':true});
+                        else res.json({'err':false});
+                    });
+                }
+            });
+        }
+    });
+});
+
+router.get('/api/removeFromSpam', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(!user || !req.headers['x-index']){
+            res.json({'err':true});
+        }else {
+            req.headers['x-index'] = req.headers['x-index'].split(',');
+            req.headers['x-index'] = req.headers['x-index'].filter(i => {
+                return i ? true : false
+            });
+            if (user.admin && req.headers['x-for']) {
+                user.email = req.headers['x-for'];
+            }
+            fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), 'utf8', (err,file)=>{
+                if(err || !file) res.json({'err':true});
+                else {
+                    let tmp = JSON.parse(file);
+                    tmp.forEach(m=>{
+                        for(let i = 0;i < req.headers['x-index'].length;i++){
+                            if(req.headers['x-index'][i] == m.id) m.spam = false;
+                        }
+                    });
+                    fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user.email + '.json'), JSON.stringify(tmp), err=>{
+                        if(err || !file) res.json({'err':true});
+                        else {
+                            tmp = tmp.filter(m=>{
+                                for(let i = 0;i < req.headers['x-index'].length;i++){
+                                    if(req.headers['x-index'][i] == m.id) return true;
+                                }
+                                return false;
+                            });
+                            let t = [];
+                            tmp.forEach(msg=>{
+                               t.push(msg.from.substring(msg.from.indexOf('<') + 1, msg.from.indexOf('>')));
+                            });
+                            fs.readFile(path.join(__dirname, '/../..', 'smtp', 'spam', user.email + '.json'), 'utf8', (err,f)=>{
+                                if(err || !file) res.json({'err':true});
+                                else {
+                                    let spamers = JSON.parse(f);
+                                    spamers = spamers.filter(spamer=>{
+                                        for(let i = 0;i < t.length;i++){
+                                            if(t[i] == spamer.address) return false;
+                                        }
+                                        return true;
+                                    });
+                                    fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'spam', user.email + '.json'), JSON.stringify(spamers), (err)=>{
+                                        if(err || !file) res.json({'err':true});
+                                        else res.json({'err':false});
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+router.get('/api/massage', (req,res)=>{
+    ifAdmin(req.headers.authorization).then(user=>{
+        if(user.admin && req.headers['x-for']){
+            getSingle(req.headers['x-for'], req.headers['x-id']).then(msg=>{
+                if(!msg) res.json({'err':'Can`t get massage'});
+                else res.json(msg);
+            });
+        }
+        else {
+            getSingle(user.email, req.headers['x-id']).then(msg=>{
+                if(!msg) res.json({'err':'Can`t get massage'});
+                else res.json(msg);
             });
         }
     });
@@ -59,7 +357,34 @@ router.get('*', (req,res)=>{
     res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'))
 });
 
-function getMsg(user, index){
+function getSingle(owner, id) {
+    return new Promise(resolve => {
+        fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msg', owner + '.json'), 'utf8', (err,file)=>{
+            if(err || !file) resolve();
+            else {
+                let tmp = JSON.parse(file);
+                tmp = tmp.filter(m=>{
+                    return m.id == id ? true : false
+                });
+                if(tmp[0]){
+                    tmp = tmp[0];
+                    fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', owner + '.json'), 'utf8', (err,f)=>{
+                        let t = JSON.parse(f);
+                        t.forEach(msg=>{
+                            if(msg.id == id){
+                                msg.read = true;
+                            }
+                        });
+                        fs.writeFile(path.join(__dirname, '/../..', 'smtp', 'msgData', owner + '.json'), JSON.stringify(t),()=>{});
+                    });
+                    resolve(tmp);
+                }else resolve();
+            }
+        });
+    });
+}
+
+function getMsg(user, index, filter, type){
     return new Promise(resolve => {
         fs.readFile(path.join(__dirname, '/../..', 'smtp', 'msgData', user + '.json'), 'utf8', (err,file)=>{
             if(err || !file) resolve([]);
@@ -67,9 +392,31 @@ function getMsg(user, index){
                 let tmp = JSON.parse(file);
                 if(!tmp) resolve();
                 else {
-                    tmp = tmp.filter(msg=>{
-                        return msg.spam ? false : true
-                    });
+                    if(type == 'default'){
+                        tmp = tmp.filter(msg=>{
+                            return msg.spam ? false : true
+                        });
+                    }else if(type == 'new'){
+                        tmp = tmp.filter(msg=>{
+                            return !msg.spam && !msg.read ? true : false
+                        });
+                    }else if(type == 'marked'){
+                        tmp = tmp.filter(msg=>{
+                            return msg.marked ? true : false
+                        });
+                    }
+                    else if(type == 'spam'){
+                        tmp = tmp.filter(msg=>{
+                            return msg.spam ? true : false
+                        });
+                    }
+                    if(filter){
+                        tmp = tmp.filter(msg=>{
+                            if(msg.from.match(filter)) return true;
+                            else if(msg.subject.match(filter)) return true;
+                            else return false;
+                        });
+                    }
                     let msgs = [];
                     const page = 20;
                     for(let i = page;i > 0;i--){

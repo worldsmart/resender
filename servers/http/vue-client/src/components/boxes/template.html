@@ -1,0 +1,10 @@
+<div class="card-panel teal box">
+  <div class="input-field col s6">
+    <input v-model="filter" id="icon_prefix" type="text" class="validate" style="border-bottom: 1px solid black;">
+    <label for="icon_prefix" style="color: black">Filter</label>
+  </div>
+  <router-link v-for="a in filtered" :to="'/mailbox/'+a" class="mailbox">
+    {{a + '@onyame.ml'}}
+  </router-link>
+  <div v-if="!filtered[0]">----*****No results</div>
+</div>

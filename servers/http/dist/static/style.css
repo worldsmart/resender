@@ -5,11 +5,6 @@
   src: url(https://fonts.gstatic.com/s/materialicons/v48/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
 }
 
-html{
-  max-height: 100vh;
-  overflow: hidden;
-}
-
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;

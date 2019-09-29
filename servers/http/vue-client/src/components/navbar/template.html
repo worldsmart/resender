@@ -5,12 +5,11 @@
       <div class="navItem">
         <ul v-if="loggedIn" id="nav-mobile" class="right hide-on-med-and-down">
           <li :class="$route.path == '/' ? 'active' : ''"><router-link class="navLink" to="/">All mails</router-link></li>
-          <li :class="$route.path == '/new' ? 'active' : ''"><router-link class="navLink" to="/new">New</router-link></li>
-          <li :class="$route.path == '/marked' ? 'active' : ''"><router-link class="navLink" to="/marked">Marked</router-link></li>
-          <li :class="$route.path == '/spam' ? 'active' : ''"><router-link class="navLink" to="/spam">Spam</router-link></li>
+          <li :class="$route.path == '/new' ? 'active' : ''"><router-link class="navLink" :to="$route.path != '/' + $route.params.id && $route.fullPath != '/' && $route.fullPath != '/new' && $route.fullPath != '/marked'  && $route.fullPath != '/spam' ? '/mailbox/' + $route.params.id + '/new' : '/new'">New</router-link></li>
+          <li :class="$route.path == '/marked' ? 'active' : ''"><router-link class="navLink" :to="$route.path != '/' + $route.params.id && $route.fullPath != '/' && $route.fullPath != '/new' && $route.fullPath != '/marked'  && $route.fullPath != '/spam' ? '/mailbox/' + $route.params.id + '/marked' : '/marked'">Marked</router-link></li>
+          <li :class="$route.path == '/spam' ? 'active' : ''"><router-link class="navLink" :to="$route.path != '/' + $route.params.id && $route.fullPath != '/' && $route.fullPath != '/new' && $route.fullPath != '/marked'  && $route.fullPath != '/spam' ? '/mailbox/' + $route.params.id + '/spam' : '/spam'">Spam</router-link></li>
           <li @click="logout()"><router-link class="navLink" to="#">Logout</router-link></li>
-          <li><div id="email" style="margin:0 0 0 20px ">{{ user.email + '@onyame.ml' }}</div></li>
-        </ul>
+          <li><div id="email" style="margin:0 0 0 20px "><router-link class="navLink" to="/mailbox">{{ user.email + '@onyame.ml' }}</router-link></div></li></ul>
       </div>
     </div>
   </nav>
