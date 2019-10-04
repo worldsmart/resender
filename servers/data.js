@@ -1,6 +1,6 @@
 const serverList = {
     "http":{
-        "server":require('./http/redirect.js'),
+        "server":require('./http/app.js'),
         "type":'HTTP',
         "port":80
     },
