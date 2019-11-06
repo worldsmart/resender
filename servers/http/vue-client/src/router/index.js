@@ -7,6 +7,7 @@ import Marked from '../components/marked/Marked'
 import Mail from '../components/mail/Mail'
 import Spam from '../components/spam/Spam'
 import NewMsgs from '../components/newMsgs/NewMsgs'
+import Send from '../components/send/Send'
 import Guard from './../guards/Guard'
 import AdminGuard from './../guards/AdminGuard'
 import VueResorse from 'vue-resource'
@@ -31,6 +32,12 @@ let router =  new Router({
       path:'/new',
       name:'app-new',
       component:NewMsgs
+    },
+    {
+      path:'/send',
+      name:'app-send',
+      component:Send,
+      beforeEnter:AdminGuard
     },
     {
       path:'/marked',

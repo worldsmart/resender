@@ -25,7 +25,7 @@ let expectedCommand = require('./commands.js');
                         socket.write(executed.response);
                     }else {
                         if(executed['ended']){
-                            socket.write('250 | OK\u000D\u000A');
+                            socket.end('250 | OK\u000D\u000A');
                             msg.id = crypto.randomBytes(16).toString("hex");
                             let mailparser = new MailParser();
                             mailparser.on("end", function(mail){
@@ -50,7 +50,6 @@ let expectedCommand = require('./commands.js');
                             });
                             mailparser.write(msg.data);
                             mailparser.end();
-
                         }else {
                             for(let a in executed.data){
                                 if(msg[a]) msg[a] += executed.data[a];

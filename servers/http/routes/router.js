@@ -3,6 +3,32 @@ const path = require('path');
 const users = require('./../users');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const multiparty = require('multiparty');
+const sender = require('./../../smtp/send.js');
+
+router.post("/api/send" , (req,res)=>{
+    req.body.attachments = [];
+    const form = new multiparty.Form();
+    form.on('error', function(err) {
+        console.log('Error parsing form: ' + err.stack);
+    });
+    form.on('field', function(name,value) {
+        req.body[name] = value;
+    });
+    form.on('file', function(name,value) {
+        req.body.attachments.push({
+            content: fs.readFileSync(value.path, 'base64'),
+            filename:value.originalFilename,
+            encoding: 'base64'
+        });
+    });
+    form.on('close', function() {
+        sender(req.body).then(r=>{
+            res.json({"success":r});
+        });
+    });
+    form.parse(req);
+});
 
 router.post("/api/server_login" , (req,res)=>{
     if(req.body.email && req.body.password){
