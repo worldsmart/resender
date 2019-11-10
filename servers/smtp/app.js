@@ -56,7 +56,11 @@ let expectedCommand = require('./commands.js');
                                 else msg[a] = executed.data[a];
                             }
                             expectedCommand = executed.next;
-                            if(socket) socket.write(executed.response);
+                           try {
+                               socket.write(executed.response);
+                           }catch (e) {
+
+                           }
                         }
                     }
                 }
