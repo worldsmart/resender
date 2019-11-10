@@ -23,6 +23,7 @@ router.post("/api/send" , (req,res)=>{
         });
     });
     form.on('close', function() {
+        req.body.tls = {rejectUnauthorized: false};
         sender(req.body).then(r=>{
             res.json({"success":r});
         });

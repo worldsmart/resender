@@ -1,13 +1,16 @@
 const nodemailer = require('nodemailer');
 const dns = require('dns');
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+
 module.exports = (msg)=>{
     return new Promise(resolve => {
         dns.resolve(msg.to.substring(msg.to.indexOf('@') + 1), 'MX', (err,records)=>{
             let transporter = nodemailer.createTransport({
                 host: /*'localhost'*/ records[0].exchange,
                 port: 25,
-                secure: true
+                secure: false
             });
 
             msg.dkim = {
