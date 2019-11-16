@@ -1,0 +1,39 @@
+.main{
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+.line{
+  display: flex;
+  margin: 5px;
+  flex-wrap: wrap;
+}
+.text{
+  width: 125px;
+  text-align: right;
+  padding: 0 13px 0 0;
+  overflow: hidden;
+}
+.input{
+  width: 60%;
+  margin: 0 0 0 5%;
+  min-width: 250px;
+}
+.submit{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  align-self: center;
+  max-width: 300px;
+  width: 90%;
+  background-color: rgb(107, 124, 150);
+}
+@media (max-width: 990px) {
+ .text{
+   padding: 0;
+   width: auto;
+   text-align: initial;
+   width: 90%;
+ }
+}

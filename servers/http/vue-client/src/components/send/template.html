@@ -1,9 +1,28 @@
-<form action="" style="margin: 20px">
-  <div>To:<input id="to" type="text"></div>
-  <div>From:<input id="from" type="text"></div>
-  <div>Subject:<input id="subject" type="text"></div>
-  <div>Text: <textarea style="min-height: 200px;" name="text" id="text" cols="30" rows="10"></textarea></div>
-  <div id="attachmentsBox"></div>
-  <div>Attachments:<input @input="addAttachment($event.target.files)" type="file" value="Add"></div>
-  <div><input type="button" value="Send" @click="send()"></div>
+<form action="" class="main">
+  <div class="line">
+    <div class="text">To:</div>
+    <input class="input" id="to" type="text">
+  </div>
+  <div class="line">
+    <div class="text">From:</div>
+    <input class="input" id="from" type="text">
+  </div>
+  <div class="line">
+    <div class="text">Subject:</div>
+    <input class="input" id="subject" type="text">
+  </div>
+  <div class="line">
+    <div class="text">Text:</div>
+    <textarea class="input" style="min-height: 200px;max-width: 90%" name="text" id="text" cols="30" rows="10"></textarea>
+  </div>
+  <div class="line" id="attachmentsBox">
+
+  </div>
+  <div class="line">
+    <div class="text">Attachments:</div>
+    <input class="input" @input="addAttachment($event.target.files)" type="file" value="Add">
+  </div>
+  <div class="line" style="justify-content: center;">
+    <input class="submit" type="button" value="Send" @click="send()"><input class="submit" type="button" value="Clear" @click="clear()">
+  </div>
 </form>

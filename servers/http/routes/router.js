@@ -452,6 +452,9 @@ function getMsg(user, index, filter, type){
                     msgs = msgs.filter(msg=>{
                         return !msg ? false : true
                     });
+                    for(let i =0;i < msgs.length;i++){
+                        msgs[i].date = msgs[i].date.substring(0, msgs[i].date.indexOf('T')) /*+ ' ' + msgs[i].date.substring(msgs[i].date.indexOf('T')+ 1, msgs[i].date.indexOf('.'))*/;
+                    }
                     resolve({lengthMsg:tmp.length,data:msgs});
                 }
             }

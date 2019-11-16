@@ -3,7 +3,18 @@
   overflow: hidden;
   width: 94%;
   height: auto;
+  border: 1px solid rgb(191, 195, 201);
+  padding: 10px;
 }
-.item{
-
+.text{
+  width: 78px;
+  text-align: -webkit-right;
+  padding: 0 7px 0 0;
+  color: rgb(244, 98, 58);
+}
+.collection-item{
+  padding: 5px 0;
+  border-bottom: 1px solid rgb(191, 195, 201);
+  display: flex;
+  flex-wrap: wrap;
 }

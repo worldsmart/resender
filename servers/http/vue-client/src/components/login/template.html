@@ -1,20 +1,11 @@
 <div class="login">
   <form class="login_form card-panel teal lighten-2">
     <div class="title">Login:</div>
-    <div class="input-field col s6" style="margin: 10px">
-      <input v-model="data.email" @input="mailValidate($event.target)" id="login" type="text" style="color: rgb(71,69,84)">
-      <label for="login" style="color: rgb(71,69,84)">Login</label>
-    </div>
-    <div class="input-field col s6" style="margin: 10px">
-      <input v-model="data.password" onblur="" @input="passwordValidate($event.target)" id="password" type="password" style="color: rgb(71,69,84)">
-      <label for="password" style="color: rgb(71,69,84)">Password</label>
-    </div>
+    <input class="field" placeholder="username" v-model="data.email" @input="mailValidate($event.target)" id="login" type="text">
+    <input class="field" placeholder="password" v-model="data.password" @input="passwordValidate($event.target)" id="password" type="password">
     <div class="danger" v-if="errors.text">{{ errors.text }}</div>
     <div @click="onSubmit()" class="btn waves-effect waves-light submit" >Submit
       <i class="material-icons right">send</i>
-    </div>
-    <div v-if="loading" class="progress">
-      <div class="indeterminate"></div>
     </div>
   </form>
 </div>

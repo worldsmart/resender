@@ -1,10 +1,10 @@
-<ul class="collection msg">
-  <li class="collection-item">From:&nbsp;{{msg.from}}</li>
-  <li class="collection-item">To:&nbsp;{{msg.to}}</li>
-  <li class="collection-item">Subject:&nbsp;{{msg.subject}}</li>
-  <li class="collection-item">Date:&nbsp;{{msg.date}}</li>
-  <li class="collection-item">Post server:&nbsp;{{msg.server}}</li>
-  <li class="collection-item" v-if="msg.html" v-html="msg.html"></li>
-  <li class="collection-item" v-if="!msg.html" v-text="msg.text"></li>
-  <li class="collection-item" ><li class="collection-item" v-if="msg.attachments" v-for="a in msg.attachments"><a :href="a.content.url" download >{{a.fileName}}</a></li></li>
-</ul>
+<div class="msg">
+  <div class="collection-item"><div class="text">From:</div>&nbsp;<div>{{msg.from}}</div></div>
+  <div class="collection-item"><div class="text">To:</div>&nbsp;<div>{{msg.to}}</div></div>
+  <div class="collection-item"><div class="text">Subject:</div>&nbsp;<div>{{msg.subject}}</div></div>
+  <div class="collection-item"><div class="text">Date:</div>&nbsp;<div>{{msg.date}}</div></div>
+  <div class="collection-item"><div class="text">Server:</div>&nbsp;<div>{{msg.server}}</div></div>
+  <div style="padding: 10px" class="collection-item" v-if="msg.html" v-html="msg.html"></div>
+  <div style="padding: 10px" class="collection-item" v-if="!msg.html" v-text="msg.text"></div>
+  <div v-if="msg.attachments" class="collection-item" ><div class="collection-item" v-if="msg.attachments" v-for="a in msg.attachments"><a :href="a.content.url" download >{{a.fileName}}</a></div></div>
+</div>

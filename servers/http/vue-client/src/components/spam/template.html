@@ -1,66 +1,66 @@
 <div class="root">
-  <div class="row" style="padding: 5px;">
 
-    <div class="col s3 side">
-      <router-link class="item" to="/send">New massage</router-link>
-      <div class="functions">
-        <div @click="delMsg" class="item">Delete</div>
-        <div @click="removeFromSpmam" class="item">Unmark spam</div>
-        <div @click="mark" class="item">Mark</div>
-        <div @click="read" class="item">Mark as read</div>
-      </div>
-      <div style="align-self: center;">
-        {{multiSelect[0] ? 'selected: (' + multiSelect.length + ')' : ''}}
-      </div>
+  <div class="options" v-if="multiSelect[0]">
+    <div style="display: flex;flex-grow: 1;justify-content: space-around;align-items: center">
+      <div @click="mark" class="item">Mark</div>
+      <div @click="read" class="item">Mark as read</div>
     </div>
-    <div class="col s9 page">
-      <div style="display: flex;align-items: center;justify-content: flex-end">
-        <div @click="markAll" style="margin: 5px 10px 0 0;cursor: pointer;margin-right: auto;">
-          <i class="material-icons">done_all</i>
-        </div>
-        <div style="width: 60%;margin: 6px auto;display: flex">
-          <i class="material-icons">search</i>
-          <input @input="getMsgs()" placeholder="Search" v-model="filter" id="icon_prefix" type="text" class="validate" style="border-bottom: 1px solid black;height: 22px;margin:auto;padding: 2px;cursor: pointer">
-        </div>
-        <div @click="reload" style="margin: 5px 10px 0 0;cursor: pointer">
-          <i class="material-icons">refresh</i>
-        </div>
-        <div style="margin: 5px">
-          {{counter}} of {{maxPage}}
-        </div>
-        <div class="arrows">
-          <i @click="clickLeft" class="material-icons">chevron_left</i>
-          <i @click="clickRight" class="material-icons" >chevron_right</i>
-        </div>
-      </div>
-      <div v-if="loading" class="progress">
-        <div class="indeterminate"></div>
-      </div>
-      <div class="massages" id="msgBox">
-        <div v-for="a in msgData" style="display: flex;width: 100%;align-items: center">
-          <input @click="addSelect($event.target.value)" :value="a.id ? a.id : ''" type="checkbox" class="checkboxMsg">
-          <router-link  :to="a.id ? '/' + a.id : '/'" :class="a.read ? 'read' : ''" class="msg">
-            <div class="msg-header">
-              <div class="header-item" >{{a.from}}</div>
-              <div class="header-item" style="text-align: end;color: rgb(16, 146, 232);">{{a.date}}</div>
-            </div>
-            <div style="display: flex;overflow: hidden;white-space: nowrap">
-              <div class="subj">{{a.subject}}</div>
-              <i v-if="a.marked" class="material-icons">bookmark_border</i>
-            </div>
-          </router-link>
-        </div>
-      </div>
-      <div style="display: flex;align-items: center;justify-content: center;">
-        <div style="margin: 5px">
-          {{counter}} of {{maxPage}}
-        </div>
-        <div class="arrows">
-          <i @click="clickLeft" class="material-icons">chevron_left</i>
-          <i @click="clickRight" class="material-icons" >chevron_right</i>
-        </div>
-      </div>
+    <div style="display: flex;flex-grow: 1;justify-content: space-around;align-items: center">
+      <div @click="removeFromSpam" class="item">Remove from spam</div>
+      <div @click="delMsg" class="item">Delete</div>
     </div>
-
   </div>
+  <div v-if="multiSelect[0]" class="pusher"></div>
+
+  <div class="page">
+    <div class="func" style="border-bottom: 1px solid rgb(191, 195, 201);padding: 5px">
+      <div @click="markAll" style="margin-right: auto;cursor: pointer">
+        <i class="material-icons">done_all</i>
+      </div>
+      <div class="func" style="flex-grow: 1;margin-left: 15px">
+        <div style="display: flex;align-items: center;flex-grow: 1">
+          <i class="material-icons" style="margin-right: 3px;">search</i>
+          <input style="min-width: 200px;width: 45%" @input="getMsgs()" placeholder="Search" v-model="filter" id="icon_prefix" type="text">
+        </div>
+        <div style="display: flex;margin-left: auto;align-items: center;justify-content: center;margin-right: 15px">
+          <div @click="reload" style="margin: 5px 10px 0 0;cursor: pointer">
+            <i class="material-icons">refresh</i>
+          </div>
+          <div style="margin: 5px 8px">
+            {{counter}} of {{maxPage}}
+          </div>
+          <div style="margin-top: 5px;">
+            <i @click="clickLeft" class="material-icons" style="cursor: pointer;">chevron_left</i>
+            <i @click="clickRight" class="material-icons" style="cursor: pointer;">chevron_right</i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="massages" id="msgBox">
+      <div v-for="a in msgData" class="msgBody" :class="a.read ? 'read' : ''">
+        <input @click="addSelect($event.target.value)" :value="a.id ? a.id : ''" type="checkbox" class="checkboxMsg">
+        <router-link  :to="a.id ? $route.params.id ? '/mailbox/' + $route.params.id + '/' + a.id : '/' + a.id : '/'" class="msg">
+          <div class="from">{{a.from}}</div>
+          <div class="subj">{{a.subject}}</div>
+          <div style="display: flex;margin-left: auto">
+            <i v-if="a.marked" class="material-icons">bookmark_border</i>
+            <div>{{a.date}}</div>
+          </div>
+        </router-link>
+      </div>
+      <div v-if="!msgData[0]" style="margin: 10px;">No massages yet</div>
+    </div>
+  </div>
+
+  <div style="display: flex;align-items: center;justify-content: center;border-top: 1px solid rgb(191, 195, 201);margin: 5px 26px;">
+    <div style="margin: 5px 8px">
+      {{counter}} of {{maxPage}}
+    </div>
+    <div style="margin-top: 5px;">
+      <i @click="clickLeft" class="material-icons" style="cursor: pointer;">chevron_left</i>
+      <i @click="clickRight" class="material-icons" style="cursor: pointer;">chevron_right</i>
+    </div>
+  </div>
+
 </div>

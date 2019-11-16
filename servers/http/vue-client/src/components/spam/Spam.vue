@@ -107,12 +107,11 @@
         this.$http.get('/api/deleteMsg',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) deleted'});
             this.getMsgs(this.counter - 1);
           }
         });
       },
-      removeFromSpmam:function () {
+      removeFromSpam:function () {
         let tmp = '';
         for( let i = 0;i < this.multiSelect.length; i++){
           tmp += this.multiSelect[i] + ',';
@@ -126,7 +125,6 @@
         this.$http.get('/api/removeFromSpam',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) removed from spam'});
             this.getMsgs(this.counter - 1);
           }
         });
@@ -145,7 +143,6 @@
         this.$http.get('/api/mark',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) marked'});
             this.getMsgs(this.counter - 1);
           }
         });
@@ -164,7 +161,6 @@
         this.$http.get('/api/read',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) marked'});
             this.getMsgs(this.counter - 1);
           }
         });

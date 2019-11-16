@@ -67,7 +67,6 @@
               localStorage.setItem('email', data.body.email);
               DataService.user = data.body;
               this.$router.push('/');
-              M.toast({html: 'You are successfully logged in!'});
             }else {
               this.errors.text = '*' + data.body.err;
             }

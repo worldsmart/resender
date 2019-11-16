@@ -1,10 +1,13 @@
 <div class="card-panel teal box">
-  <div class="input-field col s6">
-    <input v-model="filter" id="icon_prefix" type="text" class="validate" style="border-bottom: 1px solid black;">
-    <label for="icon_prefix" style="color: black">Filter</label>
+  <div class="input-field">
+    <label for="icon_prefix" style="color: #f4623a">Filter:</label>
+    <input v-model="filter" id="icon_prefix" type="text" class="validate">
   </div>
-  <router-link v-for="a in filtered" :to="'/mailbox/'+a" class="mailbox">
-    {{a + '@onyame.ml'}}
-  </router-link>
-  <div v-if="!filtered[0]">----*****No results</div>
+  <div class="boxholder">
+    <router-link v-for="a in filtered" :to="'/mailbox/'+a" class="mailbox">
+      {{a + '@onyame.ml'}}
+    </router-link>
+    <div v-if="!filtered[0]">No results</div>
+  </div>
+  <div class="input-field" style="border-bottom: none;border-top: 1px solid rgb(191, 195, 201);"></div>
 </div>

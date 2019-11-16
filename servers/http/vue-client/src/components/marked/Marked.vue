@@ -107,7 +107,6 @@
         this.$http.get('/api/deleteMsg',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) deleted'});
             this.getMsgs(this.counter - 1);
           }
         });
@@ -126,7 +125,6 @@
         this.$http.get('/api/addToSpam',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) added to spam'});
             this.getMsgs(this.counter - 1);
           }
         });
@@ -145,7 +143,6 @@
         this.$http.get('/api/unmark',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) unmarked'});
             this.getMsgs(this.counter - 1);
           }
         });
@@ -164,7 +161,6 @@
         this.$http.get('/api/read',{headers}).then(res=>{
           if(res.body || !res.body['err']){
             this.uncheckAll();
-            M.toast({html: 'Massage(s) marked'});
             this.getMsgs(this.counter - 1);
           }
         });
